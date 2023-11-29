@@ -85,6 +85,7 @@
   <script>
     const socket = io();
     let userName = '';
+    
 
     // Function to prompt user for their name
     const promptForName = () => {
@@ -98,6 +99,7 @@
     promptForName();
 
     // Function to handle sending messages
+
     const sendMessage = () => {
       const message = $('#message-input').val();
       if (message.trim() !== '') {
@@ -116,9 +118,34 @@
       }
     });
 
+    let userId = null;
+
+    // const setUserId = (id) => {
+    //   console.log('id: ', id);
+    //   userId = id;
+    //   return userId;
+    // }
+
+    // const getUserId = () => {
+    //   return userId;
+    // }
+
+
     // Socket event for receiving messages
     socket.on('chat message', (data) => {
-      const messageClass = data.userName === userName ? 'owner-message' : 'guest-message';
+      // console.log('data.userId: ', data.userId);
+      // console.log('userId: ', userId);
+      if(!userId) userId = data.userId
+      
+      // console.log('userId: ', userId);
+      // const tempUserId = userId ? setUserId(data.userId) : getUserId();
+      const tempUserId = userId;
+      // const tempUserId = userId ? data.userId : userId;
+      console.log('data.userId: ', data.userId);
+      console.log('userId: ', userId);
+      // console.log('getUserId(): ', getUserId());
+      console.log('tempUserId: ', tempUserId);
+      const messageClass = data.userId === tempUserId ? 'owner-message' : 'guest-message';
       $('#messages').append($(`<li class="message ${messageClass}">`).text(`${data.userName}: ${data.message}`));
       $('#chat-container').scrollTop($('#messages').height());
     });
