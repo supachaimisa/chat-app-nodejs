@@ -20,8 +20,6 @@ const users = [
 // Socket.io connection handling
 io.on('connection', (socket) => {
     const userUid = uuidV4();
-    // console.log(`${userUid} user connected`);
-    // console.log(`${socket.id} user connected`);
 
     function createUser(){
         users.push(
@@ -63,10 +61,6 @@ io.on('connection', (socket) => {
         console.log(`${userUid} user disconnected`);
     });
 });
-
-// app.get('/', (req, res) =>{
-
-// });
 
 // Start the server
 const PORT = process.env.PORT || 3000;
