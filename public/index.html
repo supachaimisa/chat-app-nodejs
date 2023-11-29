@@ -15,28 +15,41 @@
       background: linear-gradient(to bottom right, #667eea, #764ba2);
     }
     #chat-container {
-      width: 400px;
+      width: 600px;
       background-color: #fff;
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       padding: 20px;
+      display: flex;
+      flex-direction: column;
     }
     #messages {
       list-style-type: none;
       padding: 0;
       margin: 0;
-      max-height: 300px;
+      max-height: 400px;
       overflow-y: auto;
     }
-    #messages li {
+    .message {
       margin-bottom: 10px;
       padding: 10px;
       border-radius: 5px;
-      background-color: #f0f0f0;
-      word-break: break-word;
+      max-width: 70%;
+      word-wrap: break-word;
     }
-    #messages li:nth-child(even) {
-      background-color: #e0e0e0;
+    .guest-message {
+      max-width: 100%;
+      background-color: #007bff;
+      color: #fff;
+      align-self: flex-start;
+      text-align: left;
+    }
+    .owner-message {
+      max-width: 100%;
+      background-color: #5f27cd;
+      color: #fff;
+      align-self: flex-end;
+      text-align: right;
     }
     input[type="text"] {
       padding: 10px;
@@ -71,12 +84,24 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
     const socket = io();
+    let userName = '';
+
+    // Function to prompt user for their name
+    const promptForName = () => {
+      userName = prompt('Please enter your name:');
+      if (!userName || userName.trim() === '') {
+        userName = 'Anonymous';
+      }
+    };
+
+    // Call the function to prompt for the user's name when the page loads
+    promptForName();
 
     // Function to handle sending messages
     const sendMessage = () => {
       const message = $('#message-input').val();
       if (message.trim() !== '') {
-        socket.emit('chat message', message);
+        socket.emit('chat message', { message, userName });
         $('#message-input').val('');
       }
     };
@@ -92,8 +117,9 @@
     });
 
     // Socket event for receiving messages
-    socket.on('chat message', (msg) => {
-      $('#messages').append($('<li>').text(msg));
+    socket.on('chat message', (data) => {
+      const messageClass = data.userName === userName ? 'owner-message' : 'guest-message';
+      $('#messages').append($(`<li class="message ${messageClass}">`).text(`${data.userName}: ${data.message}`));
       $('#chat-container').scrollTop($('#messages').height());
     });
   </script>
