@@ -54,7 +54,7 @@ io.on('connection', (socket) => {
         }
 
         // userInfo
-        console.log('user: ', user);
+        // console.log('user: ', user);
         io.emit('chat message', { ...msg, userId: user.id }); // Broadcast the message to all connected clients
     });
 
